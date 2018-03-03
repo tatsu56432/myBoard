@@ -42,28 +42,8 @@
         </div>
 
         <ul class="chatItems">
-            <li class="chatItem">
-                <div class="chatItem__box">
-                    <p class="chatItem--name">name:name1</p>
-                    <p class="chatItem--date">date:</p>
-                    <p class="chatItem--comment">comment:</p>
-                </div>
-            </li>
             <?php
-            if(isset($data)){
-                foreach ($data as $val){
-                    echo <<<HTML
-            <li class="chatItem">
-                <div class="chatItem__box">
-                    <p class="chatItem--name">name:{$data[0]}</p>
-                    <p class="chatItem--date">date:</p>
-                    <p class="chatItem--comment">comment:{$data[1]}</p>
-                </div>
-            </li>
-HTML;
-                }
-            }
-
+            displayItem($data);
             ?>
         </ul>
     </div>

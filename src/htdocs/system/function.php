@@ -1,8 +1,7 @@
 <?php
 
 
-function escape($var)
-{
+function escape ($var) {
     if (is_array($var)) {
         return array_map('escape', $var);
     } else {
@@ -10,8 +9,7 @@ function escape($var)
     }
 }
 
-function view($template, $data)
-{
+function view ($template, $data) {
     escape($data);
     extract($data);
     ob_start();
@@ -21,8 +19,7 @@ function view($template, $data)
     return $view;
 }
 
-function validation($input = null)
-{
+function validation ($input = null) {
     if (!$input) {
         $input = $_POST;
     }
@@ -52,17 +49,23 @@ function validation($input = null)
 }
 
 
-function displayTable($result){
-    foreach($result as $val){
-        echo <<<HTML
-    <tr>
-        <td>{$val['address_num']}</td>
-        <td>{$val['pref_ja']}</td>
-        <td>{$val['ward_ja']}</td>
-        <td>{$val['address_ja']}</td>
-    </tr>
+function displayItem ($data) {
+    if(isset($data)){
+        $i = 0;
+        foreach ($data[0] as $val){
+            echo <<<HTML
+            <li class="chatItem">
+                <div class="chatItem__box">
+                    <p class="chatItem--name">name:{$data[0][$i][0]}</p>
+                    <p class="chatItem--date">date:{$data[0][$i][1]}</p>
+                    <p class="chatItem--comment">comment:{$data[0][$i][2    ]}</p>
+                </div>
+            </li>
 HTML;
+            $i++;
+        }
     }
+
 }
 
 function putLogData($log){
@@ -82,18 +85,38 @@ function getLogData ($log) {
     if ($getFile){
         if (flock($getFile, LOCK_SH)) {
             //一行ごとに処理を行う
-            while (!feof($getFile)) {
+            while ($line = fgets($getFile)) {
                 //$str = array();
-                $str[] = fgets($getFile);
+                $lineArray[] = explode(",",$line);
+//                $str[] = fgets($getFile);
             }
             flock($getFile, LOCK_UN);
         }else{
             echo 'ファイルの展開に失敗';
         }
     }
-    return $str;
+    return array($lineArray);
 }
 
+
+function array_column ($target_data, $column_key, $index_key = null) {
+
+    if (is_array($target_data) === FALSE || count($target_data) === 0) return FALSE;
+
+    $result = array();
+    foreach ($target_data as $array) {
+        if (array_key_exists($column_key, $array) === FALSE) continue;
+        if (is_null($index_key) === FALSE && array_key_exists($index_key, $array) === TRUE) {
+            $result[$array[$index_key]] = $array[$column_key];
+            continue;
+        }
+        $result[] = $array[$column_key];
+    }
+
+    if (count($result) === 0) return FALSE;
+    return $result;
+
+}
 
 
 function test(){

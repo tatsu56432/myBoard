@@ -12,18 +12,24 @@ if(!empty($logFile)){
     echo "logファイルの取得に失敗しました。";
 }
 
-var_dump($logData);
+
+echo "<pre>";
+print_r($logData) ;
+echo "</pre>";
+//var_dump($logData);
+
+
 
 $data = array();
 $data = $logData;
 $view = view('index.php',$data);
 echo $view;
 
+//$submit = isset($_POST['submit']) ? $_POST['submit'] : NULL;
 
-$submit = isset($_POST['submit']) ? $_POST['submit'] : NULL;
+if($_POST['send']){
 
-if($submit && $_SERVER['REQUEST_METHOD'] === 'POST'){
-
+    echo "SEND!";
 
 
     $name = isset($_POST['name']) ? $_POST['name'] : NULL;
@@ -37,7 +43,7 @@ if($submit && $_SERVER['REQUEST_METHOD'] === 'POST'){
         $data['error'] = $error;
         $data['name'] = $name;
         $data['comment'] = $comment;
-
+        $view = view('index.php',$data);
     }else{
 
     }
