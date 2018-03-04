@@ -127,4 +127,5 @@ input, select {
       border: 1px solid #0359ff;
       margin-bottom: 10px; }
       .container__inner .chatItems .chatItem .chatItem__box p {
-        padding: 10px; }
+        padding: 10px;
+        word-wrap: break-word; }

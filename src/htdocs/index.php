@@ -45,8 +45,8 @@ if($submit){
         $data = array();
         $data['error'] = $error;
         escape($data['error']);
-        $_SESSION[] = isset($_POST['name']) ? $_POST['name'] : NULL;
-        $_SESSION[] = isset($_POST['comment']) ? $_POST['comment'] : NULL;
+        $_SESSION['name'] = isset($_POST['name']) ? $_POST['name'] : NULL;
+        $_SESSION['comment'] = isset($_POST['comment']) ? $_POST['comment'] : NULL;
         //header("Location: index.php");
         //$view = view('index_view.php',$data);
         //echo $view;

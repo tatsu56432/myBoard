@@ -41,7 +41,7 @@ function validation ($input = null) {
 
     if(empty($comment)) {
         $error['comment'] = 'コメントが入力されていません';
-    }else if(mb_strlen($name) >= 100){
+    }else if(mb_strlen($comment) >= 100){
         $error['comment'] = 'コメントは100文字以内で入力してください。';
     }
 
