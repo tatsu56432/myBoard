@@ -3,17 +3,6 @@ session_start();
 
 require_once "system/function.php";
 
-//if (!empty($_POST)) {
-//    //SESSIONに保存したらページを更新
-//    $_SESSION = $_POST;
-//
-//    $_SESSION = array();
-//    session_destroy();
-//    //現在のURLで更新
-//    header("Location: index.php");
-//    exit;
-//}
-
 $logFile = './system/log.txt';
 
 if(!empty($logFile)){
@@ -30,6 +19,7 @@ if(!empty($logFile)){
 
 $logData = escape($logData);
 
+//最初にここでviewをエコー
 //$view = view('index_view.php',$logData);
 //echo $view;
 
@@ -43,11 +33,14 @@ if($submit){
     $error = validation($_POST);
     if(count($error) > 0){
         $data = array();
+
+
         $data['error'] = $error;
         escape($data['error']);
         $_SESSION['name'] = isset($_POST['name']) ? $_POST['name'] : NULL;
         $_SESSION['comment'] = isset($_POST['comment']) ? $_POST['comment'] : NULL;
-        //header("Location: index.php");
+
+        //index.phpの上で一度echo割れたものを馬が来できない。viewの受け渡しの時の上書きってどうすればいい？
         //$view = view('index_view.php',$data);
         //echo $view;
     }else{
