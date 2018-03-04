@@ -1,4 +1,13 @@
+<?php
 
+//print_r($logFile);
+
+//$logData = getLogData($logFile);
+
+//var_dump($data);
+
+
+?>
 <!doctype html>
 <html lang="ja">
 <head>
@@ -26,13 +35,13 @@
                 <div class="nameInput">
 
                     <label for="name">名前を入力</label>
-                    <input type="text" name="name" id="name" class="form-control" placeholder="username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <input type="text" name="name" id="name" class="form-control" placeholder="username" aria-label="Recipient's username" aria-describedby="basic-addon2" value="<?php if (isset($_SESSION['name'])){ echo $_SESSION['name']; } ?>">
                     <?php  if(isset($error['name'])) echo '<p class="error">'.$error['name'].'</p>';?>
                 </div>
 
                 <div class="commentInput">
                     <label for="comment">コメントを入力</label>
-                    <textarea class="form-control" aria-label="With textarea" placeholder="comment" name="comment"></textarea>
+                    <textarea class="form-control" aria-label="With textarea" placeholder="comment" name="comment"><?php  if(isset($_SESSION['comment'])) echo $_SESSION['comment']; ?> </textarea>
                     <?php  if(isset($error['comment'])) echo '<p class="error">'.$error['comment'].'</p>';?>
                 </div>
 
@@ -44,7 +53,7 @@
 
         <ul class="chatItems">
             <?php
-            displayItem($data);
+            displayItem($logData);
             ?>
         </ul>
     </div>
