@@ -103,6 +103,8 @@ input, select {
       padding-bottom: 10px; }
     .container__inner .inputArea .nameInput input {
       width: 450px; }
+    .container__inner .inputArea .nameInput .error {
+      color: red; }
     .container__inner .inputArea .commentInput {
       margin-top: 20px; }
       .container__inner .inputArea .commentInput label {
@@ -110,6 +112,8 @@ input, select {
         padding-bottom: 10px; }
       .container__inner .inputArea .commentInput input {
         width: 450px; }
+      .container__inner .inputArea .commentInput .error {
+        color: red; }
     .container__inner .inputArea .submitBtn {
       margin-top: 20px; }
   .container__inner .chatItems {

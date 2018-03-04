@@ -42,7 +42,7 @@ function validation ($input = null) {
     if(empty($comment)) {
         $error['comment'] = 'コメントが入力されていません';
     }else if(mb_strlen($name) >= 100){
-        $error['name'] = 'コメントは100文字以内で入力してください。';
+        $error['comment'] = 'コメントは100文字以内で入力してください。';
     }
 
     return $error;
@@ -64,6 +64,8 @@ function displayItem ($data) {
 HTML;
             $i++;
         }
+    }else{
+        echo "logファイルのデータがありません";
     }
 
 }
@@ -89,9 +91,7 @@ function getLogData ($log) {
         if (flock($getFile, LOCK_SH)) {
             //一行ごとに処理を行う
             while ($line = fgets($getFile)) {
-                //$str = array();
                 $lineArray[] = explode(",",$line);
-//                $str[] = fgets($getFile);
             }
             flock($getFile, LOCK_UN);
         }else{
@@ -99,31 +99,4 @@ function getLogData ($log) {
         }
     }
     return array($lineArray);
-}
-
-
-function array_column ($target_data, $column_key, $index_key = null) {
-
-    if (is_array($target_data) === FALSE || count($target_data) === 0) return FALSE;
-
-    $result = array();
-    foreach ($target_data as $array) {
-        if (array_key_exists($column_key, $array) === FALSE) continue;
-        if (is_null($index_key) === FALSE && array_key_exists($index_key, $array) === TRUE) {
-            $result[$array[$index_key]] = $array[$column_key];
-            continue;
-        }
-        $result[] = $array[$column_key];
-    }
-
-    if (count($result) === 0) return FALSE;
-    return $result;
-
-}
-
-
-function test(){
-
-    echo "test";
-
 }
