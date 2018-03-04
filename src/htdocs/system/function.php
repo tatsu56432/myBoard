@@ -53,7 +53,7 @@ function displayItem ($data) {
     if(isset($data) && is_array($data)){
         $i = 0;
         foreach ($data[0] as $val){
-            echo <<<HTML
+            $html = <<<HTML
             <li class="chatItem">
                 <div class="chatItem__box">
                     <p class="chatItem--name">name:{$data[0][$i][0]}</p>
@@ -62,9 +62,10 @@ function displayItem ($data) {
                 </div>
             </li>
 HTML;
+            echo nl2br($html);
             $i++;
         }
-    }else{
+    }elseif(empty($data)){
         echo "logファイルのデータがありません";
     }
 
@@ -73,6 +74,7 @@ HTML;
 function putLogData ($file  , $name , $comment) {
     $date =  date('Y年m月d日 H時i分s秒');
     $comment_data = $comment;
+    $comment_data = nl2br($comment_data);
     $name_data = $name;
     $logData = $name_data . ',' . $date . "," .$comment_data . "\n";
     if (($fp = fopen($file, 'a')) !== FALSE) {
