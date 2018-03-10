@@ -1,5 +1,60 @@
 <?php
 
+require_once "define.php";
+
+function db_connect () {
+    $mysqlConnect = mysqli_connect(HOST,DB_USER_NAME,DB_PASS,DB_NAME) or
+    die(mysqli_connect_error());
+
+    mysqli_set_charset($mysqlConnect,'utf-8');
+
+    return $mysqlConnect;
+
+}
+
+function db_connect_pdo () {
+
+    try {
+        $pdo = new PDO('mysql:host=' . HOST . ';dbname=' . DB_NAME . ';charset=utf8',DB_USER_NAME,DB_PASS,
+            array(PDO::ATTR_EMULATE_PREPARES => false));
+
+        return $pdo;
+
+    } catch (PDOException $e) {
+        exit('データベース接続失敗。'.$e->getMessage());
+    }
+
+}
+
+
+function get_db_data ($pdo) {
+    $data = array();
+    $query = 'SELECT name, comment FROM board';
+    $stmt = $pdo->query("SELECT name, comment FROM board");
+    while($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
+        $data[] = $row["name"];
+        $data[] = $row["comment"];
+        return $data;
+    }
+}
+
+function insert_db ($pdo , $insertData) {
+    $name = $insertData[0];
+    $comment = $insertData[1];
+    $ip_address = $_SERVER['REMOTE_ADDR'];
+    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+
+    $stmt = $pdo -> prepare("INSERT INTO board (name, comment , ip_address , user_agent) VALUES (:name, :comment , :ip_adddress , :user_agent)");
+    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmt->bindParam(':value', $comment, PDO::PARAM_STR);
+    $stmt->bindParam(':value', $ip_address, PDO::PARAM_STR);
+    $stmt->bindParam(':value', $user_agent, PDO::PARAM_STR);
+
+    $stmt->execute();
+
+}
+
+
 
 function escape ($var) {
     if (is_array($var)) {
@@ -102,3 +157,6 @@ function getLogData ($log) {
     }
     return array($lineArray);
 }
+
+
+
