@@ -2,12 +2,12 @@
 
 require_once "define.php";
 
-function db_connect () {
-    $mysqlConnect = mysqli_connect(HOST,DB_USER_NAME,DB_PASS,DB_NAME) or
-    die(mysqli_connect_error());
-    mysqli_set_charset($mysqlConnect,'utf-8');
-    return $mysqlConnect;
-}
+//function db_connect () {
+//    $mysqlConnect = mysqli_connect(HOST,DB_USER_NAME,DB_PASS,DB_NAME) or
+//    die(mysqli_connect_error());
+//    mysqli_set_charset($mysqlConnect,'utf-8');
+//    return $mysqlConnect;
+//}
 
 function db_connect_pdo () {
     try {
@@ -66,16 +66,6 @@ function escape ($var) {
     }
 }
 
-function view ($template, $data) {
-    escape($data);
-    extract($data);
-    ob_start();
-    include dirname(__FILE__) . '/view/' . $template;
-    $view = ob_get_contents();
-    ob_end_clean();
-    return $view;
-}
-
 function validation ($input = null) {
     if (!$input) {
         $input = $_POST;
@@ -83,13 +73,10 @@ function validation ($input = null) {
 
     $name = isset($input['name']) ? $input['name'] : null;
     $comment = isset($input['comment']) ? $input['comment'] : null;
-
-    //データを整形
     $name = trim($name);
 
-    //エラー配列の初期化、
-    $error = array();
 
+    $error = array();
     if(empty($name)){
         $error['name'] = '名前が入力されてません';
     }else if(mb_strlen($name) >= 20){
