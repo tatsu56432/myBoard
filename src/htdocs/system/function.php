@@ -10,7 +10,6 @@ function db_connect () {
 }
 
 function db_connect_pdo () {
-
     try {
         $pdo = new PDO('mysql:host=' . HOST . ';dbname=' . DB_NAME . ';charset=utf8',DB_USER_NAME,DB_PASS,
             array(PDO::ATTR_EMULATE_PREPARES => false));
@@ -20,7 +19,6 @@ function db_connect_pdo () {
     } catch (PDOException $e) {
         exit('データベース接続失敗。'.$e->getMessage());
     }
-
 }
 
 
@@ -47,11 +45,11 @@ function insert_db ($pdo , $insertData) {
     $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
     $stmt = $pdo -> query("SET NAMES utf8;");
-    $stmt = $pdo -> prepare("INSERT INTO board (id , name, comment , ip_address , date) VALUES (:id , :name, :comment , :user_agent , :date)");
+    $stmt = $pdo -> prepare("INSERT INTO board (id , name, comment , user_agent , date) VALUES (:id , :name, :comment , :user_agent , :date)");
     $stmt->bindValue(':id', $id , PDO::PARAM_INT);
     $stmt->bindParam(':name', $name, PDO::PARAM_STR);
     $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
-//    $stmt->bindParam(':ip_address', $ip_address, PDO::PARAM_STR);
+//  $stmt->bindParam(':ip_address', $ip_address, PDO::PARAM_STR);
     $stmt->bindParam(':user_agent', $user_agent, PDO::PARAM_STR);
     $stmt->bindParam(':date', $date, PDO::PARAM_STR);
 
@@ -108,56 +106,43 @@ function validation ($input = null) {
 }
 
 
-function displayItem ($data) {
+function get_target_col ($data , $target) {
     if(isset($data) && is_array($data)){
-        foreach ($data as $val){
+        $arrTarget = array();
+        foreach ($data as $key1 => $val1){
+            foreach ($val1 as $key2 => $val2){
+                if($key2 == $target){
+                    $arrTarget[] = $val2;
+                }
+            }
+        }
+        return $arrTarget;
+    }elseif(empty($data)){
+        echo "まだコメントはありません";
+    }
+}
+
+function displayItem ($data , $name_vars = NULL,$comment_vars = NULL ,$date_vars = NULL) {
+    if(isset($data) && is_array($data)){
+        $i = 0;
+        foreach ($data as $key => $val){
             $html = <<<HTML
             <li class="chatItem">
                 <div class="chatItem__box">
-                    <p class="chatItem--name">name:{$data['name']}</p>
-                    <p class="chatItem--date">date:{$data['date']}</p>
-                    <p class="chatItem--comment">comment:{$data['comment']}</p>
+                    <p class="chatItem--name">name:{$name_vars[$i]}</p>
+                    <p class="chatItem--date">date:{$date_vars[$i]}</p>
+                    <p class="chatItem--comment">comment:{$comment_vars[$i]}</p>
                 </div>
             </li>
 HTML;
+            $i++;
             echo nl2br($html);
         }
+
     }elseif(empty($data)){
         echo "まだコメントはありません";
     }
 
-}
-
-function putLogData ($file  , $name , $comment) {
-    $date =  date('Y年m月d日 H時i分s秒');
-    $comment_data = $comment;
-    $comment_data = nl2br($comment_data);
-    $name_data = $name;
-    $logData = $name_data . ',' . $date . "," .$comment_data . "\n";
-    if (($fp = fopen($file, 'a')) !== FALSE) {
-        if (fwrite($fp, $logData) === FALSE) {
-            print 'ファイル書き込み失敗:  ' . $file;
-        }
-        fclose($fp);
-    }
-}
-
-
-function getLogData ($log) {
-
-    $getFile = fopen($log, 'r');
-    if ($getFile){
-        if (flock($getFile, LOCK_SH)) {
-            //一行ごとに処理を行う
-            while ($line = fgets($getFile)) {
-                $lineArray[] = explode(",",$line);
-            }
-            flock($getFile, LOCK_UN);
-        }else{
-            echo 'ファイルの展開に失敗';
-        }
-    }
-    return array($lineArray);
 }
 
 

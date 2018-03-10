@@ -1,27 +1,10 @@
 <?php
 session_start();
-
 require_once "system/function.php";
 
-$logFile = './system/log.txt';
-
-if(!empty($logFile)){
-    $logData = getLogData($logFile);
-}else{
-    echo "logファイルの取得に失敗しました。";
-}
-
-
-//echo "<pre>";
-//print_r($logData) ;
-//echo "</pre>";
-//var_dump($logData);
-
-$logData = escape($logData);
-
-//最初にここでviewをエコー
-//$view = view('index_view.php',$logData);
-//echo $view;
+$pdo = db_connect_pdo();
+$db_data = get_db_data($pdo);
+$db_data = escape($db_data);
 
 $data = escape($_POST);
 $name = isset($_POST['name']) ? $_POST['name'] : NULL;
@@ -29,25 +12,19 @@ $comment = isset($_POST['comment']) ? $_POST['comment'] : NULL;
 $submit = isset($_POST['submit']) ? $_POST['submit'] : NULL;
 
 if($submit){
-//  echo "SEND!";
     $error = validation($_POST);
     if(count($error) > 0){
         $data = array();
-
-
         $data['error'] = $error;
         escape($data['error']);
         $_SESSION['name'] = isset($_POST['name']) ? $_POST['name'] : NULL;
         $_SESSION['comment'] = isset($_POST['comment']) ? $_POST['comment'] : NULL;
-
-        //index.phpの上で一度echo割れたものを馬が来できない。viewの受け渡しの時の上書きってどうすればいい？
-        //$view = view('index_view.php',$data);
-        //echo $view;
     }else{
         $data = array();
         $data['name'] = $name;
         $data['comment'] = $comment;
-        putLogData($logFile,$name,$comment);
+        $data['date'] = date('Y-m-d H:i:s');
+        insert_db($pdo,$data);
         header("Location: index.php");
 
         //sessionを破棄
@@ -107,7 +84,12 @@ if($submit){
 
         <ul class="chatItems">
             <?php
-            displayItem($logData);
+
+            $name_array = get_target_col($db_data,'name');
+            $comment_array = get_target_col($db_data,'comment');
+            $date_array = get_target_col($db_data,'date');
+
+            displayItem($db_data,$name_array,$comment_array,$date_array);
             ?>
         </ul>
     </div>
