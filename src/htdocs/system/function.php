@@ -5,11 +5,8 @@ require_once "define.php";
 function db_connect () {
     $mysqlConnect = mysqli_connect(HOST,DB_USER_NAME,DB_PASS,DB_NAME) or
     die(mysqli_connect_error());
-
     mysqli_set_charset($mysqlConnect,'utf-8');
-
     return $mysqlConnect;
-
 }
 
 function db_connect_pdo () {
@@ -29,29 +26,34 @@ function db_connect_pdo () {
 
 function get_db_data ($pdo) {
     $data = array();
-    $query = 'SELECT name, comment FROM board';
-    $stmt = $pdo->query("SELECT name, comment FROM board");
+    $stmt = $pdo->query("SELECT name, comment ,date FROM board");
     while($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
-        $data[] = $row["name"];
-        $data[] = $row["comment"];
-        return $data;
+        $data['name'] = $row["name"];
+        $data['comment'] = $row["comment"];
+        $data['date'] = $row["date"];
     }
+
+    return $data;
 }
 
 function insert_db ($pdo , $insertData) {
-    $name = $insertData[0];
-    $comment = $insertData[1];
+    $id = NULL;
+    $name =$insertData['name'];
+    $comment = $insertData['comment'];
+    $date = $insertData['date'];
     $ip_address = $_SERVER['REMOTE_ADDR'];
     $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
-    $stmt = $pdo -> prepare("INSERT INTO board (name, comment , ip_address , user_agent) VALUES (:name, :comment , :ip_adddress , :user_agent)");
+    $stmt = $pdo -> query("SET NAMES utf8;");
+    $stmt = $pdo -> prepare("INSERT INTO board (id , name, comment , ip_address , user_agent , date) VALUES (:id , :name, :comment , :ip_address , :user_agent , :date)");
+    $stmt->bindValue(':id', $id , PDO::PARAM_INT);
     $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-    $stmt->bindParam(':value', $comment, PDO::PARAM_STR);
-    $stmt->bindParam(':value', $ip_address, PDO::PARAM_STR);
-    $stmt->bindParam(':value', $user_agent, PDO::PARAM_STR);
+    $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
+    $stmt->bindParam(':ip_address', $ip_address, PDO::PARAM_STR);
+    $stmt->bindParam(':user_agent', $user_agent, PDO::PARAM_STR);
+    $stmt->bindParam(':date', $date, PDO::PARAM_STR);
 
     $stmt->execute();
-
 }
 
 
@@ -106,22 +108,20 @@ function validation ($input = null) {
 
 function displayItem ($data) {
     if(isset($data) && is_array($data)){
-        $i = 0;
-        foreach ($data[0] as $val){
+        foreach ($data as $val){
             $html = <<<HTML
             <li class="chatItem">
                 <div class="chatItem__box">
-                    <p class="chatItem--name">name:{$data[0][$i][0]}</p>
-                    <p class="chatItem--date">date:{$data[0][$i][1]}</p>
-                    <p class="chatItem--comment">comment:{$data[0][$i][2]}</p>
+                    <p class="chatItem--name">name:{$data['name']}</p>
+                    <p class="chatItem--date">date:{$data['date']}</p>
+                    <p class="chatItem--comment">comment:{$data['comment']}</p>
                 </div>
             </li>
 HTML;
             echo nl2br($html);
-            $i++;
         }
     }elseif(empty($data)){
-        echo "logファイルのデータがありません";
+        echo "まだコメントはありません";
     }
 
 }
