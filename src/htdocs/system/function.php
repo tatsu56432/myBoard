@@ -26,13 +26,15 @@ function db_connect_pdo () {
 
 function get_db_data ($pdo) {
     $data = array();
-    $stmt = $pdo->query("SELECT name, comment ,date FROM board");
+    $stmt = $pdo -> query("SET NAMES utf8;");
+    $stmt = $pdo->query("SELECT * FROM board");
     while($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
-        $data['name'] = $row["name"];
-        $data['comment'] = $row["comment"];
-        $data['date'] = $row["date"];
+        $data[] = array(
+            'name' => $row["name"],
+            'comment' => $row["comment"],
+            'date' => $row["date"],
+        );
     }
-
     return $data;
 }
 
@@ -41,15 +43,15 @@ function insert_db ($pdo , $insertData) {
     $name =$insertData['name'];
     $comment = $insertData['comment'];
     $date = $insertData['date'];
-    $ip_address = $_SERVER['REMOTE_ADDR'];
+    //$ip_address = $_SERVER['REMOTE_ADDR'];
     $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
     $stmt = $pdo -> query("SET NAMES utf8;");
-    $stmt = $pdo -> prepare("INSERT INTO board (id , name, comment , ip_address , user_agent , date) VALUES (:id , :name, :comment , :ip_address , :user_agent , :date)");
+    $stmt = $pdo -> prepare("INSERT INTO board (id , name, comment , ip_address , date) VALUES (:id , :name, :comment , :user_agent , :date)");
     $stmt->bindValue(':id', $id , PDO::PARAM_INT);
     $stmt->bindParam(':name', $name, PDO::PARAM_STR);
     $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
-    $stmt->bindParam(':ip_address', $ip_address, PDO::PARAM_STR);
+//    $stmt->bindParam(':ip_address', $ip_address, PDO::PARAM_STR);
     $stmt->bindParam(':user_agent', $user_agent, PDO::PARAM_STR);
     $stmt->bindParam(':date', $date, PDO::PARAM_STR);
 
